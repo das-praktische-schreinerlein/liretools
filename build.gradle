@@ -1,0 +1,60 @@
+plugins {
+    id 'java'
+}
+
+group 'de.mytb.liretools'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'liretools',
+                   'Implementation-Version': version
+    }
+}
+
+task initLireWin(type:Exec) {
+    workingDir '.'
+    commandLine 'cmd', '/c', 'mkdir contributed & cd contributed && git clone https://github.com/dermotte/lire.git & cd lire && git checkout 1d46e55c2e57113686c6e43652e90a7f5e150005 && ..\\..\\gradlew jar && xcopy lib\\* ..\\..\\lib\\ /s /e /Y && xcopy build\\libs\\* ..\\..\\lib\\ /s /e /Y'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'org.apache.lucene', name: 'lucene-core', version: '8.0.0'
+    compile group: 'org.apache.lucene', name: 'lucene-analyzers-common', version: '8.0.0'
+    compile group: 'org.apache.lucene', name: 'lucene-queryparser', version: '8.0.0'
+    compile group: 'commons-io', name: 'commons-io', version: '2.6'
+    compile group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
+    compile group: 'commons-codec', name: 'commons-codec', version: '1.11'
+    compile group: 'com.sangupta', name: 'jopensurf', version: '1.0.0'
+    compile files('libs/opencv-2411.jar')
+    // compile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '2.4.11-0.11'
+    compile fileTree(dir: 'lib', include: '*.jar')
+
+    // ---< Helper files, optional >---
+    runtime fileTree(dir: 'lib', include: '*.jar')
+    runtime group: 'com.twelvemonkeys.imageio', name: 'imageio-jpeg', version: '3.4.1'
+
+    testRuntime group: 'com.twelvemonkeys.imageio', name: 'imageio-jpeg', version: '3.4.1'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+task runIndexing(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    systemProperty "java.library.path", ".\\lib\\opencv"
+    main = 'de.mytb.liretools.ParallelIndexing'
+}
+
+task runSearch(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    systemProperty "java.library.path", ".\\lib\\opencv"
+    main = 'de.mytb.liretools.Searcher'
+}
