@@ -1,0 +1,121 @@
+package de.mytb.liretools;
+
+import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
+import net.semanticmetadata.lire.imageanalysis.features.global.CEDD;
+import net.semanticmetadata.lire.imageanalysis.features.global.ColorLayout;
+import net.semanticmetadata.lire.imageanalysis.features.global.FCTH;
+import net.semanticmetadata.lire.imageanalysis.features.global.SimpleColorHistogram;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
+
+public class SearchOptions {
+    public static final String MODE_JSON = "json";
+
+    private boolean flgDebug = false;
+    private double maxDifferenceScore = 8;
+    private boolean flgUseBitSampling = false;
+    private String luceneIndexPath = "index";
+    private int numOfThreads = 4;
+    private final int showSimilarHits;
+    private String mode = MODE_JSON;
+    private List<Class<? extends GlobalFeature>> features = new ArrayList<>();
+
+    public SearchOptions(Properties p) {
+        if (p.getProperty("-b") != null) {
+            flgUseBitSampling = true;
+        }
+        if (p.getProperty("-d") != null) {
+            flgDebug = true;
+        }
+        if (p.getProperty("-m") != null) {
+            maxDifferenceScore = Double.parseDouble(p.getProperty("-m"));
+        } else {
+            maxDifferenceScore = 5;
+        }
+        if (p.getProperty("-n") != null) {
+            numOfThreads = Integer.parseInt(p.getProperty("-n"));
+        }
+        if (p.getProperty("-s") != null) {
+            showSimilarHits = Integer.parseInt(p.getProperty("-s"));
+        } else {
+            showSimilarHits = 1;
+        }
+        if (p.getProperty("-l") != null) {
+            luceneIndexPath = p.getProperty("-l");
+        }
+
+        if (p.get("-f") != null && p.get("-f") != null) {
+            String argf = p.getProperty("-f");
+            String[] featuresNames = new String[1];
+            if (argf.contains(",")) {
+                // split features
+                featuresNames = argf.split(",");
+            } else {
+                featuresNames[0] = argf;
+            }
+            for (String feature : featuresNames) {
+                if (!feature.contains(".")) {
+                    feature = "net.semanticmetadata.lire.imageanalysis.features.global." + feature;
+                }
+                try {
+                    features.add((Class<? extends GlobalFeature>) Class.forName(feature));
+                } catch (Exception ex) {
+                    throw new IllegalStateException(ex);
+                }
+            }
+        } else {
+            features = Arrays.asList(CEDD.class, FCTH.class,
+                //OpponentHistogram.class,
+                //JointHistogram.class,
+                //AutoColorCorrelogram.class,
+                ColorLayout.class,
+                //EdgeHistogram.class,
+                //Gabor.class,
+                //JCD.class,
+                //JpegCoefficientHistogram.class,
+                //ScalableColor.class,
+                SimpleColorHistogram.class
+                //Tamura.class,
+                //LuminanceLayout.class,
+                //PHOG.class,
+                //LocalBinaryPatterns.class
+            );
+        }
+
+    }
+
+    public boolean isFlgDebug() {
+        return flgDebug;
+    }
+
+    public double getMaxDifferenceScore() {
+        return maxDifferenceScore;
+    }
+
+    public boolean isFlgUseBitSampling() {
+        return flgUseBitSampling;
+    }
+
+    public String getLuceneIndexPath() {
+        return luceneIndexPath;
+    }
+
+    public int getNumOfThreads() {
+        return numOfThreads;
+    }
+
+    public int getShowSimilarHits() {
+        return showSimilarHits;
+    }
+
+    public String getMode() {
+        return mode;
+    }
+
+    public List<Class<? extends GlobalFeature>> getFeatures() {
+        return features;
+    }
+}

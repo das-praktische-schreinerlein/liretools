@@ -2,6 +2,7 @@
 # exit on error
 set -e
 CWD=$(pwd)
+SCRIPTPATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 function dofail {
     cd $CWD
     printf '%s\n' "$1" >&2  ## Send message to stderr. Exclude >&2 if you don't want it that way.
@@ -36,7 +37,7 @@ fi
 echo "start - indexing images"
 
 echo "now: configure linux vars: run sbin/configure-environment.sh"
-source ./configure-environment.bash
+source ${SCRIPTPATH}/configure-environment.bash
 
 echo "now: running indexing images from '$INDEXSRC_MEDIADIR' to '$INDEXDIR' features:'$LIREINDEXER_FEATURES' threads:'$LIREINDEXER_NUMTHREADS'"
 cd ${LIRETOOLS}

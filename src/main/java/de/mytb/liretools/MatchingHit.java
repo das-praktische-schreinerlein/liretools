@@ -5,10 +5,10 @@ import java.text.DecimalFormat;
 public class MatchingHit {
     private static final DecimalFormat DF2 = new DecimalFormat("#.##");
 
-    private Class extractor;
-    private String fileName;
-    private Double score;
-    private Double relScore;
+    private final Class extractor;
+    private final String fileName;
+    private final Double score;
+    private final Double relScore;
 
     public MatchingHit(Class extractor, String fileName, Double score, Double relScore) {
         this.extractor = extractor;
