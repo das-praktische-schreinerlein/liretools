@@ -68,16 +68,16 @@ public class CommonSearcher {
         double maxDifferenceScore, int showSimilarHits, boolean flgUseBitSampling) throws IOException {
         Map<Class<? extends GlobalFeature>, ImageSearcher> imageSearcherMap =
             new HashMap<>();
+        IndexReader ir = DirectoryReader.open(FSDirectory.open(Paths.get(luceneIndexPath)));
         for (Class<? extends GlobalFeature> featureClass : features) {
             try {
                 imageSearcherMap.put(featureClass, flgUseBitSampling ?
                     new BitSamplingImageSearcher(showSimilarHits, featureClass.newInstance()) :
-                    new GenericFastImageSearcher(showSimilarHits, featureClass));
+                    new GenericFastImageSearcher(showSimilarHits, featureClass, true, ir));
             } catch (Exception ex) {
                 throw new IllegalStateException(ex);
             }
         }
-        IndexReader ir = DirectoryReader.open(FSDirectory.open(Paths.get(luceneIndexPath)));
 
         while (!requestQueue.isEmpty()) {
             SearchRequest<?> searchRequest = requestQueue.poll();
@@ -93,31 +93,31 @@ public class CommonSearcher {
             BufferedImage img = null;
 
             switch (searchrequest.getType()) {
-                case DOCUMENT:
-                    searchDocument =  (Document)searchrequest.getRequest();
-                    searchFileName = searchDocument.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
-                    break;
-                case FILE:
-                    searchFileName = (String)searchrequest.getRequest();
-                    File searchFile = new File(searchFileName);
-                    img = ImageIO.read(searchFile);
-                    break;
-                default:
-                    throw new IllegalArgumentException("unknown searchType:" + searchrequest.getType());
+            case DOCUMENT:
+                searchDocument =  (Document)searchrequest.getRequest();
+                searchFileName = searchDocument.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
+                break;
+            case FILE:
+                searchFileName = (String)searchrequest.getRequest();
+                File searchFile = new File(searchFileName);
+                img = ImageIO.read(searchFile);
+                break;
+            default:
+                throw new IllegalArgumentException("unknown searchType:" + searchrequest.getType());
             }
 
             Map<String, FileMatchingHits> fileFavs = new HashMap<>();
             for (Map.Entry<Class<? extends GlobalFeature>, ImageSearcher> searcher : imageSearcherMap.entrySet()) {
                 final ImageSearchHits hits;
                 switch (searchrequest.getType()) {
-                    case DOCUMENT:
-                        hits = searcher.getValue().search(searchDocument, ir);
-                        break;
-                    case FILE:
-                        hits = searcher.getValue().search(img, ir);
-                        break;
-                    default:
-                        throw new IllegalArgumentException("unknown searchType:" + searchrequest.getType());
+                case DOCUMENT:
+                    hits = searcher.getValue().search(searchDocument, ir);
+                    break;
+                case FILE:
+                    hits = searcher.getValue().search(img, ir);
+                    break;
+                default:
+                    throw new IllegalArgumentException("unknown searchType:" + searchrequest.getType());
                 }
                 processHits(searcher, ir, fileFavs, hits);
             }
@@ -127,8 +127,8 @@ public class CommonSearcher {
                 fileFavs.forEach((s, strings) -> System.err.println("File: " + s + " by " + strings));
             }
 
-            writer.println(formatter.generateFileResult(maxDifferenceScore, searchFileName, fileFavs)
-                + formatter.generateFileEntrySeparator());
+            writer.println(formatter.generateFileResult(maxDifferenceScore, searchFileName, fileFavs) +
+                formatter.generateFileEntrySeparator());
 
         } catch (Exception e) {
             e.printStackTrace();

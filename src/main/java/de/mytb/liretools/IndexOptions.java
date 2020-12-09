@@ -1,5 +1,6 @@
 package de.mytb.liretools;
 
+import lombok.Getter;
 import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
 import net.semanticmetadata.lire.imageanalysis.features.global.*;
 
@@ -8,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+@Getter
 public class IndexOptions {
     public static final String MODE_JSON = "json";
 
@@ -69,25 +71,5 @@ public class IndexOptions {
             );
         }
 
-    }
-
-    public boolean isFlgDebug() {
-        return flgDebug;
-    }
-
-    public boolean isFlgUseBitSampling() {
-        return flgUseBitSampling;
-    }
-
-    public String getLuceneIndexPath() {
-        return luceneIndexPath;
-    }
-
-    public int getNumOfThreads() {
-        return numOfThreads;
-    }
-
-    public List<Class<? extends GlobalFeature>> getFeatures() {
-        return features;
     }
 }

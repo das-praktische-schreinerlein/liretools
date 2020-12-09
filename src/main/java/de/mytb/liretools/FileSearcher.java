@@ -31,7 +31,6 @@ public class FileSearcher {
         ;
 
     public static void main(String[] args) throws IOException {
-
         Properties p = CommandLineUtils.getProperties(args, helpMessage, new String[] { "-i" });
         SearchOptions searchOptions = new SearchOptions(p);
         boolean passed = false;

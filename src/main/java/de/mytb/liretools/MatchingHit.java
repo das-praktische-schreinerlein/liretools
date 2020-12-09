@@ -1,7 +1,10 @@
 package de.mytb.liretools;
 
+import lombok.Getter;
+
 import java.text.DecimalFormat;
 
+@Getter
 public class MatchingHit {
     private static final DecimalFormat DF2 = new DecimalFormat("#.##");
 
@@ -16,23 +19,6 @@ public class MatchingHit {
         this.score = score;
         this.relScore = relScore;
     }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public Double getScore() {
-        return score;
-    }
-
-    public Double getRelScore() {
-        return relScore;
-    }
-
-    public Class getExtractor() {
-        return extractor;
-    }
-
     public String toString() {
         return "{" + getExtractor().getSimpleName() + ": " + DF2.format(getScore()) + " / " + DF2.format(getRelScore()) + "}";
     }

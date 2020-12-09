@@ -1,5 +1,6 @@
 package de.mytb.liretools;
 
+import lombok.Getter;
 import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
 import net.semanticmetadata.lire.imageanalysis.features.global.CEDD;
 import net.semanticmetadata.lire.imageanalysis.features.global.ColorLayout;
@@ -11,6 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+@Getter
 public class SearchOptions {
     public static final String MODE_JSON = "json";
 
@@ -85,37 +87,5 @@ public class SearchOptions {
             );
         }
 
-    }
-
-    public boolean isFlgDebug() {
-        return flgDebug;
-    }
-
-    public double getMaxDifferenceScore() {
-        return maxDifferenceScore;
-    }
-
-    public boolean isFlgUseBitSampling() {
-        return flgUseBitSampling;
-    }
-
-    public String getLuceneIndexPath() {
-        return luceneIndexPath;
-    }
-
-    public int getNumOfThreads() {
-        return numOfThreads;
-    }
-
-    public int getShowSimilarHits() {
-        return showSimilarHits;
-    }
-
-    public String getMode() {
-        return mode;
-    }
-
-    public List<Class<? extends GlobalFeature>> getFeatures() {
-        return features;
     }
 }

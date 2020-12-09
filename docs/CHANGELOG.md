@@ -10,7 +10,6 @@
 ### new features
 - similarity-indexer: added similarity-searcher to get a list of similar documents in index
  
-
 ### improvements
 - scripts: improved sbin-scripts
 - indexer: refactored code
