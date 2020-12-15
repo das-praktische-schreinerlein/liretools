@@ -13,7 +13,7 @@ public class JsonFormatter implements Formatter {
             String.join(",\n",
                 generateJsonField("file",
                     generateJsonRecord(
-                        String.join(", ",
+                        String.join(",",
                             generateJsonTextField("dir",
                                 escapeJsonValue(getDirName(searchFileName))),
                             generateJsonTextField("name",
@@ -31,13 +31,13 @@ public class JsonFormatter implements Formatter {
     @Override
     public String generateHeader() {
         return "{"
-            + "  \"files\": [";
+            + "\"files\":[";
     }
 
     @Override
     public String generateFooter() {
         return generateFileResult(0, "dummydir/dummyfile", new HashMap<>())
-            + "  ]\n"
+            + "]\n"
             + "}";
     }
 
@@ -53,7 +53,7 @@ public class JsonFormatter implements Formatter {
                 s -> fileFavs.get(s).getMatchingHits().stream()
                     .filter(matchingHit -> matchingHit.getScore() < maxDifferenceScore)
                     .sorted(Comparator.comparing(MatchingHit::getScore)).map(matchingHit -> generateJsonRecord(String
-                        .join(", ", generateJsonTextField("id", escapeJsonValue(s)),
+                        .join(",", generateJsonTextField("id", escapeJsonValue(s)),
                             generateJsonTextField("dir", escapeJsonValue(getDirName(s))),
                             generateJsonTextField("name", escapeJsonValue(getFileName(s))),
                             generateJsonTextField("matching", "SIMILARITY"),
@@ -75,19 +75,19 @@ public class JsonFormatter implements Formatter {
     }
 
     private String generateJsonField(String field, String value) {
-        return "  \"" + field + "\": " + value + "";
+        return "\"" + field + "\":" + value + "";
     }
 
     private String generateJsonTextField(String field, String value) {
-        return "  \"" + field + "\": \"" + value + "\"";
+        return "\"" + field + "\":\"" + value + "\"";
     }
 
     private String generateJsonRecord(String values) {
-        return "    {" + values + "}";
+        return "{" + values + "}";
     }
 
     private String generateJsonList(String values) {
-        return "    [\n" + values + "\n    ]";
+        return "[\n" + values + "\n]";
     }
 
 

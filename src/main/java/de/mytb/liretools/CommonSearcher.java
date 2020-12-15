@@ -108,18 +108,21 @@ public class CommonSearcher {
 
             Map<String, FileMatchingHits> fileFavs = new HashMap<>();
             for (Map.Entry<Class<? extends GlobalFeature>, ImageSearcher> searcher : imageSearcherMap.entrySet()) {
+                final boolean skipSameFile;
                 final ImageSearchHits hits;
                 switch (searchrequest.getType()) {
                 case DOCUMENT:
                     hits = searcher.getValue().search(searchDocument, ir);
+                    skipSameFile = true;
                     break;
                 case FILE:
                     hits = searcher.getValue().search(img, ir);
+                    skipSameFile = false;
                     break;
                 default:
                     throw new IllegalArgumentException("unknown searchType:" + searchrequest.getType());
                 }
-                processHits(searcher, ir, fileFavs, hits);
+                processHits(searcher, ir, fileFavs, hits, searchFileName, skipSameFile);
             }
 
             if (flgDebug) {
@@ -135,11 +138,16 @@ public class CommonSearcher {
         }
     }
 
-    private void processHits(Map.Entry<Class<? extends GlobalFeature>, ImageSearcher> searcher, IndexReader ir,
-        Map<String, FileMatchingHits> fileFavs, ImageSearchHits hits) throws IOException {
+    private void processHits(final Map.Entry<Class<? extends GlobalFeature>, ImageSearcher> searcher, IndexReader ir,
+        final Map<String, FileMatchingHits> fileFavs, ImageSearchHits hits, final String searchFileName,
+        final boolean skipSameFile) throws IOException {
         double max = hits.score(hits.length() - 1);
         for (int i = 0; i < hits.length(); i++) {
             String fileName = ir.document(hits.documentID(i)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
+            if (skipSameFile && searchFileName.toLowerCase().equals(fileName.toLowerCase())) {
+                continue;
+            }
+
             double score = hits.score(i);
             double relScore = score != 0
                 ? 100 - score / max * 100
