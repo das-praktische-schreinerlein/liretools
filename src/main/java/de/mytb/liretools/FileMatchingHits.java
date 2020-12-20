@@ -1,31 +1,17 @@
 package de.mytb.liretools;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.List;
 
+@Getter
+@Setter
+@AllArgsConstructor
 public class FileMatchingHits {
-    private String fileName;
+    private final String fileName;
     private Double minScore;
-    private List<MatchingHit> matchingHits;
+    private final List<MatchingHit> matchingHits;
 
-    public FileMatchingHits(String fileName, Double minScore, List<MatchingHit> matchingHits) {
-        this.fileName = fileName;
-        this.minScore = minScore;
-        this.matchingHits = matchingHits;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public Double getMinScore() {
-        return minScore;
-    }
-
-    public void setMinScore(Double minScore) {
-        this.minScore = minScore;
-    }
-
-    public List<MatchingHit> getMatchingHits() {
-        return matchingHits;
-    }
 }
